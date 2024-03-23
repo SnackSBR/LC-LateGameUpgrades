@@ -83,7 +83,7 @@ namespace MoreShipUpgrades
 
             UpgradeBus.Instance.version = Metadata.VERSION;
             UpgradeBus.Instance.UpgradeAssets = UpgradeAssets;
-            
+
             SetupModStore(ref UpgradeAssets);
 
             SetupIntroScreen();

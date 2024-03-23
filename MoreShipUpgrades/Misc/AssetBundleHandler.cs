@@ -38,6 +38,7 @@ namespace MoreShipUpgrades.Misc
 
         const string models = root + "Models/";
         const string prefabs = models + "Prefabs/";
+        const string Friendly = models + "Textures/FriendlyHoarderBug/";
 
         const string SFX = root + "Sound Effects/";
         const string contractSFX = SFX + "Contracts/";
@@ -144,6 +145,7 @@ namespace MoreShipUpgrades.Misc
             { "Scavenger Sounds", extractionSFX + "scavSounds/scavAudio.json" },
             { "Floppy Disk", dataItems + "DiscItem.asset" },
             { "Laptop", dataItems + "DataPCItem.asset" },
+            { "Friendly Hoarder Bug Texture", Friendly+"FriendlyHoarderBugTexWithTransparency.png"}
         };
         /// <summary>
         /// Tries to load an asset from provided asset bundle through a given path into a GameObject
