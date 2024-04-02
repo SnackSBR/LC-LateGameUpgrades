@@ -28,10 +28,7 @@ using MoreShipUpgrades.UpgradeComponents.Interfaces;
 using MoreShipUpgrades.UpgradeComponents.TierUpgrades.AttributeUpgrades;
 using System.Linq;
 using MoreShipUpgrades.Compat;
-using CSync.Lib;
 using MoreShipUpgrades.UpgradeComponents.Items.FriendlyHoarderBug;
-using UnityEngine.InputSystem;
-using MoreShipUpgrades.Input;
 
 namespace MoreShipUpgrades
 {
@@ -594,30 +591,6 @@ namespace MoreShipUpgrades
             UpgradeBus.Instance.ItemsToSync.Add("Wheel", wheelbarrow);
 
             SetupStoreItem(wheelbarrow);
-        }
-
-        private string[] SetupWheelbarrowTooltips()
-        {
-            bool dropAllItemsKeySet;
-            UnityEngine.InputSystem.Key dropAllItemsKey = UnityEngine.InputSystem.Key.None;
-            bool dropAllItemsMouseButtonSet;
-            UnityEngine.InputSystem.LowLevel.MouseButton dropAllitemsMouseButton = UnityEngine.InputSystem.LowLevel.MouseButton.Middle;
-            string controlBind = SyncedInstance<PluginConfig>.Default.WHEELBARROW_DROP_ALL_CONTROL_BIND.Value;
-            if (Enum.TryParse(controlBind, out UnityEngine.InputSystem.Key toggle))
-            {
-                dropAllItemsKey = toggle;
-                dropAllItemsKeySet = true;
-            }
-            else dropAllItemsKeySet = false;
-            if (Enum.TryParse(controlBind, out UnityEngine.InputSystem.LowLevel.MouseButton mouseButton))
-            {
-                dropAllitemsMouseButton = mouseButton;
-                dropAllItemsMouseButtonSet = true;
-            }
-            else dropAllItemsMouseButtonSet = false;
-            string usedMouseButton = dropAllItemsMouseButtonSet ? dropAllitemsMouseButton.ToString() : "MMB";
-            string usedKey = dropAllItemsKeySet ? dropAllItemsKey.ToString() : usedMouseButton;
-            return [$"Drop all items: [{usedKey}]"];
         }
 
         private void SetupFriendlyNest()
