@@ -78,6 +78,7 @@ namespace MoreShipUpgrades
             AssetBundle UpgradeAssets = AssetBundle.LoadFromFile(assetDir);
 
             GameObject gameObject = new GameObject("UpgradeBus");
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
             gameObject.AddComponent<UpgradeBus>();
             gameObject = new GameObject("SpawnItemManager");
             gameObject.AddComponent<SpawnItemManager>();
@@ -846,6 +847,7 @@ namespace MoreShipUpgrades
             if (!perk) return;
 
             perk.AddComponent<T>();
+            perk.hideFlags = HideFlags.HideAndDontSave;
             NetworkPrefabs.RegisterNetworkPrefab(perk);
         }
     }
