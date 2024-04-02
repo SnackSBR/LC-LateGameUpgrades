@@ -116,6 +116,7 @@ namespace MoreShipUpgrades.Misc
             { Sigurd.UPGRADE_NAME, upgrades+"Sigurd.prefab" },
             { EfficientEngines.UPGRADE_NAME, upgrades+"EfficientEngines.prefab" },
             { ClimbingGloves.UPGRADE_NAME, upgrades+"ClimbingGloves.prefab" },
+            { LithiumBatteries.UPGRADE_NAME, upgrades+"LithiumBatteries.prefab" },
 
             { "Advanced Portable Tele", storeItems+"TpButtonAdv.asset" },
             { "Portable Tele", storeItems+"TpButton.asset" },
@@ -161,7 +162,6 @@ namespace MoreShipUpgrades.Misc
             {
                 logger.LogError($"An error has occurred trying to load asset from {path}");
             }
-            logger.LogDebug($"Loaded asset located in {path}");
             return result;
         }
         /// <summary>
@@ -180,7 +180,6 @@ namespace MoreShipUpgrades.Misc
             {
                 logger.LogError($"An error has occurred trying to load asset from {path}");
             }
-            logger.LogDebug($"Loaded asset located in {path}");
             return result;
         }
 
@@ -191,7 +190,6 @@ namespace MoreShipUpgrades.Misc
             {
                 logger.LogError($"An error has occurred trying to load asset from {path}");
             }
-            logger.LogDebug($"Loaded asset located in {path}");
             return result;
         }
 
@@ -211,7 +209,6 @@ namespace MoreShipUpgrades.Misc
             {
                 logger.LogError($"An error has occurred trying to load asset from {path}");
             }
-            logger.LogDebug($"Loaded asset located in {path}");
             return result;
         }
 
