@@ -3,7 +3,7 @@ using MoreShipUpgrades.Misc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
+using System.Reflection.Emit;
 
 namespace MoreShipUpgrades.Patches.Enemies
 {
@@ -34,6 +34,30 @@ namespace MoreShipUpgrades.Patches.Enemies
             index = Tools.FindFloat(index, ref codes, findValue: 6, addCode: upgradedRange, errorMessage: "Couldn't find the 6 value which is used as speed");
             index = Tools.FindFloat(index, ref codes, findValue: 6, addCode: upgradedRange, errorMessage: "Couldn't find the 6 value which is used as speed");
             return codes.AsEnumerable();
+        }
+
+        [HarmonyPatch(nameof(HoarderBugAI.KillEnemy))]
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> KillAndDestroyTranspiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var code = new List<CodeInstruction>(instructions);
+
+            int insertionIndex = -1;
+            for (int i = 0; i < code.Count - 1; i++)
+            {
+                if (code[i].opcode == OpCodes.Ldc_I4_0 && code[i + 1].opcode == OpCodes.Call)
+                {
+                    insertionIndex = i;
+                    break;
+                }
+            }
+
+            if (insertionIndex != -1)
+            {
+                code[insertionIndex] = new(OpCodes.Ldarg_1);
+            }
+
+            return code;
         }
 
         public static int GetUpgradedRange(int defaultValue)

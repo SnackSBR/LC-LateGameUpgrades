@@ -29,6 +29,7 @@ using MoreShipUpgrades.UpgradeComponents.TierUpgrades.AttributeUpgrades;
 using System.Linq;
 using MoreShipUpgrades.Compat;
 using CSync.Lib;
+using MoreShipUpgrades.UpgradeComponents.Items.FriendlyHoarderBug;
 
 namespace MoreShipUpgrades
 {
@@ -322,6 +323,7 @@ namespace MoreShipUpgrades
             SetupHelmet();
             SetupDivingKit();
             SetupWheelbarrows();
+            SetupFriendlyNest();
         }
         private void SetupSamples()
         {
@@ -649,6 +651,26 @@ namespace MoreShipUpgrades
             string usedKey = dropAllItemsKeySet ? dropAllItemsKey.ToString() : usedMouseButton;
             return [$"Drop all items: [{usedKey}]"];
         }
+
+        private void SetupFriendlyNest()
+        {
+            Item friendlyNest = AssetBundleHandler.GetItemObject("Friendly Nest");
+            if (friendlyNest == null) return;
+
+            friendlyNest.itemId = 492020;
+            friendlyNest.creditsWorth = 50;
+            friendlyNest.floorYOffset = -90;
+            friendlyNest.positionOffset = new Vector3(-0.29f, 0.43f, 0.32f);
+            friendlyNest.rotationOffset = new Vector3(-28.30f, 189f, 91.25f);
+            friendlyNest.weight = 0.99f;
+            FriendlyNest friendlyNestScript = friendlyNest.spawnPrefab.AddComponent<FriendlyNest>();
+            friendlyNestScript.grabbableToEnemies = false;
+            friendlyNestScript.itemProperties = friendlyNest;
+            NetworkPrefabs.RegisterNetworkPrefab(friendlyNest.spawnPrefab);
+            Utilities.FixMixerGroups(friendlyNest.spawnPrefab);
+            SetupStoreItem(friendlyNest);
+        }
+
         private void SetupPerks()
         {
             SetupBeekeeper();

@@ -60,6 +60,7 @@ namespace MoreShipUpgrades.Patches.Enemies
 
             return false;
         }
+
         [HarmonyPrefix]
         [HarmonyPatch(nameof(HoarderBugAI.OnCollideWithPlayer))]
         private static bool DontCollide(ref HoarderBugAI __instance)
@@ -81,5 +82,4 @@ namespace MoreShipUpgrades.Patches.Enemies
             }
         }
     }
-
 }

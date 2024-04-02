@@ -142,7 +142,8 @@ namespace MoreShipUpgrades.Misc
             { "Scavenger Sounds", extractionSFX + "scavSounds/scavAudio.json" },
             { "Floppy Disk", dataItems + "DiscItem.asset" },
             { "Laptop", dataItems + "DataPCItem.asset" },
-            { "Friendly Hoarder Bug Texture", Friendly+"FriendlyHoarderBugTexWithTransparency.png"}
+            { "Friendly Hoarder Bug Texture", Friendly + "FriendlyHoarderBugTexWithTransparency.png"},
+            { "Friendly Nest", items + "FriendlyHoarderBug/FriendlyNestItem.asset"}
         };
         /// <summary>
         /// Tries to load an asset from provided asset bundle through a given path into a GameObject
