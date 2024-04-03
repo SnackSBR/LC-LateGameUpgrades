@@ -693,7 +693,8 @@ namespace MoreShipUpgrades.Misc
             FRIENDLY_NEST_ENABLED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Enable the Friendly Nest Item", true, "Allows you to buy a Friendly Nest that spawns a Friendly Hoarding Bug to help you");
             FRIENDLY_NEST_PRICE = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of the Friendly Nest Item", 400, "Price of the Friendly Nest in the store");
             FRIENDLY_NEST_WEIGHT = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Weight of the Friendly Nest Item", 30f, "Weight of the Friendly Nest in lbs");
-            FRIENDSHIP_BOOSTER_ENABLED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Enable the Friendship Booster upgrade", true, "Enable the Friendship Booster upgrade");
+            topSection = "Friendship Booster";
+            FRIENDSHIP_BOOSTER_ENABLED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Enable the Friendship Booster upgrade", true, "Enable the Friendship Booster upgrade, only works if Friendly Nest is enabled");
             FRIENDSHIP_BOOSTER_PRICE = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of the Friendship Booster", 500, "Price to unlock the Friendship Booster upgrade");
             FRIENDSHIP_BOOSTER_PRICE2 = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of first Friendship Booster tier", 500, "This tier increase the Hoarder Bug speed");
             FRIENDSHIP_BOOSTER_PRICE3 = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of second Friendship Booster tier", 500, "This tier increase the Hoarder Bug search range");

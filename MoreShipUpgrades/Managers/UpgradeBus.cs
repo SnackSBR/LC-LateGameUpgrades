@@ -563,7 +563,7 @@ namespace MoreShipUpgrades.Managers
         {
             SetupMultiplePurchasableTerminalNode(FriendshipBooster.UPGRADE_NAME,
                                                 shareStatus: true,
-                                                PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value,
+                                                PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value && PluginConfiguration.FRIENDLY_NEST_ENABLED.Value,
                                                 PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE.Value,
                                                 new int[] { PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE2.Value, PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE3.Value }
                                                 );
