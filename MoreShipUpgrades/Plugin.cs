@@ -138,6 +138,7 @@ namespace MoreShipUpgrades
             harmony.PatchAll(typeof(HoarderBugAIPatcher));
             harmony.PatchAll(typeof(RedLocustBeesPatch));
             harmony.PatchAll(typeof(SpringManAIPatcher));
+            harmony.PatchAll(typeof(HoarderBugAITranspilerPatcher));
         }
 
         static void PatchHUD()
@@ -678,7 +679,7 @@ namespace MoreShipUpgrades
             friendlyNest.itemId = 492020;
             friendlyNest.creditsWorth = UpgradeBus.Instance.PluginConfiguration.FRIENDLY_NEST_PRICE.Value;
             friendlyNest.floorYOffset = -90;
-            friendlyNest.positionOffset = new Vector3(-0.29f, 0.43f, 0.32f);
+            friendlyNest.positionOffset = new Vector3(-0.29f, 0.43f, -0.48f);
             friendlyNest.rotationOffset = new Vector3(-28.30f, 189f, 91.25f);
             friendlyNest.weight = 0.99f + (UpgradeBus.Instance.PluginConfiguration.FRIENDLY_NEST_WEIGHT.Value / 100f);
             FriendlyNest friendlyNestScript = friendlyNest.spawnPrefab.AddComponent<FriendlyNest>();
