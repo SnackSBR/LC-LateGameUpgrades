@@ -57,7 +57,6 @@ namespace MoreShipUpgrades.UpgradeComponents.TierUpgrades
         {
             if (!UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value) return defaultValue;
             if (!GetActiveUpgrade(UPGRADE_NAME)) return defaultValue;
-            Debug.Log($"Friendship level: {GetUpgradeLevel(UPGRADE_NAME)}");
             if (GetUpgradeLevel(UPGRADE_NAME) < 2) return defaultValue;
             return defaultValue + UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_RANGE.Value;
         }
@@ -66,7 +65,6 @@ namespace MoreShipUpgrades.UpgradeComponents.TierUpgrades
         {
             if (!UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value) return defaultValue;
             if (!GetActiveUpgrade(UPGRADE_NAME)) return defaultValue;
-            Debug.Log($"Friendship level: {GetUpgradeLevel(UPGRADE_NAME)}");
             if (GetUpgradeLevel(UPGRADE_NAME) < 1) return defaultValue;
             return defaultValue + UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_SPEED.Value;
         }
