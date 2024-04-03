@@ -53,6 +53,8 @@ namespace MoreShipUpgrades.Misc
         [field: DataMember] public SyncedEntry<bool> CLIMBING_GLOVES_ENABLED {  get; set; }
         [field: DataMember] public SyncedEntry<bool> WEATHER_PROBE_ENABLED { get; set; }
         [field: DataMember] public SyncedEntry<bool> LITHIUM_BATTERIES_ENABLED { get; set; }
+        [field: DataMember] public SyncedEntry<bool> FRIENDLY_NEST_ENABLED { get; set; }
+        [field: DataMember] public SyncedEntry<bool> FRIENDSHIP_BOOSTER_ENABLED { get; set; }
         // individual or shared
         [field: DataMember] public SyncedEntry<bool> BEEKEEPER_INDIVIDUAL { get; set; }
         [field: DataMember] public SyncedEntry<bool> PROTEIN_INDIVIDUAL { get; set; }
@@ -109,6 +111,10 @@ namespace MoreShipUpgrades.Misc
         [field: DataMember] public SyncedEntry<int> SIGURD_PRICE { get; set; }
         [field: DataMember] public SyncedEntry<int> EFFICIENT_ENGINES_PRICE { get; set; }
         [field: DataMember] public SyncedEntry<int> LITHIUM_BATTERIES_PRICE {  get; set; }
+        [field: DataMember] public SyncedEntry<int> FRIENDLY_NEST_PRICE { get; set; }
+        [field: DataMember] public SyncedEntry<int> FRIENDSHIP_BOOSTER_PRICE { get; set; }
+        [field: DataMember] public SyncedEntry<int> FRIENDSHIP_BOOSTER_PRICE2 { get; set; }
+        [field: DataMember] public SyncedEntry<int> FRIENDSHIP_BOOSTER_PRICE3 { get; set; }
 
         // attributes
         [field: DataMember] public SyncedEntry<string> LITHIUM_BATTERIES_PRICES { get; set; }
@@ -305,6 +311,10 @@ namespace MoreShipUpgrades.Misc
         [field: DataMember] public SyncedEntry<float> SIGURD_LAST_DAY_PERCENT { get; set; }
         [field: DataMember] public SyncedEntry<bool> SALE_APPLY_ONCE { get; set; }
         [field: DataMember] public SyncedEntry<bool> WEATHER_PROBE_ALWAYS_CLEAR {  get; set; }
+        [field: DataMember] public SyncedEntry<float> FRIENDLY_NEST_WEIGHT { get; set; }
+        [field: DataMember] public SyncedEntry<float> FRIENDSHIP_BOOSTER_SPEED { get; set; }
+        [field: DataMember] public SyncedEntry<int> FRIENDSHIP_BOOSTER_RANGE { get; set; }
+        [field: DataMember] public SyncedEntry<float> FRIENDSHIP_BOOSTER_WAIT { get; set; }
 
         public PluginConfig(ConfigFile cfg) : base(Metadata.GUID)
         {
@@ -678,6 +688,19 @@ namespace MoreShipUpgrades.Misc
             SCRAP_WHEELBARROW_LOOK_SENSITIVITY_DRAWBACK = SyncedBindingExtensions.BindSyncedEntry(cfg,topSection, "Look sensitivity drawback of the Shopping Cart Item", 0.8f, "Value multiplied on the player's look sensitivity when moving with the Scrap wheelbarrow Item");
             SCRAP_WHEELBARROW_MOVEMENT_SLOPPY = SyncedBindingExtensions.BindSyncedEntry(cfg,topSection, "Sloppiness of the Shopping Cart Item", 2f, "Value multiplied on the player's movement to give the feeling of drifting while carrying the Scrap Wheelbarrow Item");
             SCRAP_WHEELBARROW_PLAY_NOISE = SyncedBindingExtensions.BindSyncedEntry(cfg,topSection, "Plays noises for players with Shopping Cart Item", true, "If false, it will just not play the sounds, it will still attract monsters to noise");
+
+            topSection = "Friendly Nest";
+            FRIENDLY_NEST_ENABLED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Enable the Friendly Nest Item", true, "Allows you to buy a Friendly Nest that spawns a Friendly Hoarding Bug to help you");
+            FRIENDLY_NEST_PRICE = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of the Friendly Nest Item", 400, "Price of the Friendly Nest in the store");
+            FRIENDLY_NEST_WEIGHT = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Weight of the Friendly Nest Item", 30f, "Weight of the Friendly Nest in lbs");
+            FRIENDSHIP_BOOSTER_ENABLED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Enable the Friendship Booster upgrade", true, "Enable the Friendship Booster upgrade");
+            FRIENDSHIP_BOOSTER_PRICE = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of the Friendship Booster", 500, "Price to unlock the Friendship Booster upgrade");
+            FRIENDSHIP_BOOSTER_PRICE2 = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of first Friendship Booster tier", 500, "This tier increase the Hoarder Bug speed");
+            FRIENDSHIP_BOOSTER_PRICE3 = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Price of second Friendship Booster tier", 500, "This tier increase the Hoarder Bug search range");
+            FRIENDSHIP_BOOSTER_SPEED = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Additional Speed for Friendly Hoarder", 4f, "Additional Speed boost for the Friendly Hoader Bug");
+            FRIENDSHIP_BOOSTER_RANGE = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Additional Search Range for Friendly Hoarder", 20, "Additional Search Range boost for the Friendly Hoader Bug");
+            FRIENDSHIP_BOOSTER_WAIT = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, "Wait time for Friendly Hoarder", 5f, "Time that the Hoader Bug wait on the nest");
+
             InitialSyncCompleted += PluginConfig_InitialSyncCompleted;
         }
 

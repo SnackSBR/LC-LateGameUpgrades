@@ -599,16 +599,19 @@ namespace MoreShipUpgrades
             if (friendlyNest == null) return;
 
             friendlyNest.itemId = 492020;
-            friendlyNest.creditsWorth = 50;
+            friendlyNest.creditsWorth = UpgradeBus.Instance.PluginConfiguration.FRIENDLY_NEST_PRICE.Value;
             friendlyNest.floorYOffset = -90;
             friendlyNest.positionOffset = new Vector3(-0.29f, 0.43f, 0.32f);
             friendlyNest.rotationOffset = new Vector3(-28.30f, 189f, 91.25f);
-            friendlyNest.weight = 0.99f;
+            friendlyNest.weight = 0.99f + (UpgradeBus.Instance.PluginConfiguration.FRIENDLY_NEST_WEIGHT.Value / 100f);
             FriendlyNest friendlyNestScript = friendlyNest.spawnPrefab.AddComponent<FriendlyNest>();
             friendlyNestScript.grabbableToEnemies = false;
             friendlyNestScript.itemProperties = friendlyNest;
             NetworkPrefabs.RegisterNetworkPrefab(friendlyNest.spawnPrefab);
             Utilities.FixMixerGroups(friendlyNest.spawnPrefab);
+
+            UpgradeBus.Instance.ItemsToSync.Add("Friendly", friendlyNest);
+
             SetupStoreItem(friendlyNest);
         }
 
@@ -645,6 +648,7 @@ namespace MoreShipUpgrades
             SetupEfficientEngines();
             SetupClimbingGloves();
             SetupLithiumBatteries();
+            SetupFriendshipBooster();
         }
 
         private void SetupSickBeats()
@@ -777,6 +781,11 @@ namespace MoreShipUpgrades
         void SetupLithiumBatteries()
         {
             SetupGenericPerk<LithiumBatteries>(LithiumBatteries.UPGRADE_NAME);
+        }
+        private void SetupFriendshipBooster()
+        {
+            SetupGenericPerk<FriendshipBooster>(FriendshipBooster.UPGRADE_NAME);
+
         }
         /// <summary>
         /// Generic function where it adds a script (specificed through the type) into an GameObject asset 

@@ -198,6 +198,13 @@ namespace MoreShipUpgrades.Managers
                 Items.RemoveShopItem(ItemsToSync["Wheel"]);
             }
             else if (ItemsToSync["Wheel"].creditsWorth != PluginConfiguration.WHEELBARROW_PRICE.Value) Items.UpdateShopItemPrice(ItemsToSync["Wheel"], PluginConfiguration.WHEELBARROW_PRICE.Value);
+
+            if (!PluginConfiguration.FRIENDLY_NEST_ENABLED.Value)
+            {
+                logger.LogInfo("Removing Friendly Nest from store.");
+                Items.RemoveShopItem(ItemsToSync["Friendly"]);
+            }
+            else if (ItemsToSync["Friendly"].creditsWorth != PluginConfiguration.FRIENDLY_NEST_PRICE.Value) Items.UpdateShopItemPrice(ItemsToSync["Friendly"], PluginConfiguration.FRIENDLY_NEST_PRICE.Value);
         }
 
         void SyncAvailableContracts()
@@ -321,6 +328,8 @@ namespace MoreShipUpgrades.Managers
             SetupEfficientEnginesNode();
             SetupClimbingGlovesTerminalNode();
             SetupLithiumBatteriesTerminalNode();
+
+            SetupFriendShipBoosterTerminalNode();
             terminalNodes.Sort();
         }
         void SetupEfficientEnginesNode()
@@ -549,6 +558,15 @@ namespace MoreShipUpgrades.Managers
                                                 PluginConfiguration.LITHIUM_BATTERIES_ENABLED.Value,
                                                 PluginConfiguration.LITHIUM_BATTERIES_PRICE.Value,
                                                 ParseUpgradePrices(PluginConfiguration.LITHIUM_BATTERIES_PRICES.Value));
+        }
+        private void SetupFriendShipBoosterTerminalNode()
+        {
+            SetupMultiplePurchasableTerminalNode(FriendshipBooster.UPGRADE_NAME,
+                                                shareStatus: true,
+                                                PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value,
+                                                PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE.Value,
+                                                new int[] { PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE2.Value, PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE3.Value }
+                                                );
         }
         /// <summary>
         /// Generic function where it adds a terminal node for an upgrade that can be purchased multiple times

@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using MoreShipUpgrades.Misc;
+using MoreShipUpgrades.Misc.Util;
+using MoreShipUpgrades.UpgradeComponents.TierUpgrades;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +16,7 @@ namespace MoreShipUpgrades.Patches.Enemies
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> ChangeSearchRangeTranspiler(IEnumerable<CodeInstruction> instructions)
         {
-            MethodInfo upgradedRange = typeof(HoarderBugAITranspilerPatcher).GetMethod(nameof(GetUpgradedRange));
+            MethodInfo upgradedRange = typeof(FriendshipBooster).GetMethod(nameof(FriendshipBooster.GetUpgradedRange));
             List<CodeInstruction> codes = new(instructions);
             int index = 0;
 
@@ -27,7 +29,7 @@ namespace MoreShipUpgrades.Patches.Enemies
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> ChangeSpeedTranspiler(IEnumerable<CodeInstruction> instructions)
         {
-            MethodInfo upgradedRange = typeof(HoarderBugAITranspilerPatcher).GetMethod(nameof(GetUpgradedSpeed));
+            MethodInfo upgradedRange = typeof(FriendshipBooster).GetMethod(nameof(FriendshipBooster.GetUpgradedSpeed));
             List<CodeInstruction> codes = new(instructions);
             int index = 0;
 
@@ -58,16 +60,6 @@ namespace MoreShipUpgrades.Patches.Enemies
             }
 
             return code;
-        }
-
-        public static int GetUpgradedRange(int defaultValue)
-        {
-            return defaultValue + 20;
-        }
-
-        public static float GetUpgradedSpeed(float defaultValue)
-        {
-            return defaultValue + 4;
         }
     }
 }

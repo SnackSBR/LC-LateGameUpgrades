@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using MoreShipUpgrades.Managers;
+using MoreShipUpgrades.Misc.Upgrades;
+using MoreShipUpgrades.UpgradeComponents.TierUpgrades;
 using UnityEngine;
 
 namespace MoreShipUpgrades.Patches.Enemies
@@ -75,10 +77,12 @@ namespace MoreShipUpgrades.Patches.Enemies
         private static void WaitLess(ref HoarderBugAI __instance)
         {
             if (FriendlyID != __instance.NetworkObject.NetworkObjectId) return;
+            if (!UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value) return;
+            if (!BaseUpgrade.GetActiveUpgrade(FriendshipBooster.UPGRADE_NAME)) return;
 
-            if(__instance.waitingAtNest && __instance.waitingAtNestTimer > 5f)
+            if (__instance.waitingAtNest && __instance.waitingAtNestTimer > UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_WAIT.Value)
             {
-                __instance.waitingAtNestTimer = 5f;
+                __instance.waitingAtNestTimer = UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_WAIT.Value;
             }
         }
     }
