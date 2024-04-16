@@ -9,10 +9,10 @@ namespace MoreShipUpgrades.UpgradeComponents.TierUpgrades.AttributeUpgrades
     internal class ClimbingGloves : GameAttributeTierUpgrade, IPlayerSync
     {
         internal const string UPGRADE_NAME = "Climbing Gloves";
-
+        internal const string DEFAULT_PRICES = "200,250,300";
         void Awake()
         {
-            upgradeName = UPGRADE_NAME;
+            upgradeName = UpgradeBus.Instance.PluginConfiguration.OVERRIDE_UPGRADE_NAMES ? UpgradeBus.Instance.PluginConfiguration.CLIMBING_GLOVES_OVERRIDE_NAME : UPGRADE_NAME;
             logger = new LguLogger(UPGRADE_NAME);
             changingAttribute = GameAttribute.PLAYER_CLIMB_SPEED;
             initialValue = UpgradeBus.Instance.PluginConfiguration.INITIAL_CLIMBING_SPEED_BOOST.Value;

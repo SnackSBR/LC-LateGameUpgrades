@@ -93,10 +93,7 @@ namespace MoreShipUpgrades
 
             UpgradeBus.Instance.version = Metadata.VERSION;
             UpgradeBus.Instance.UpgradeAssets = UpgradeAssets;
-
             SetupModStore(ref UpgradeAssets);
-
-            SetupIntroScreen();
 
             SetupItems();
             
@@ -107,34 +104,16 @@ namespace MoreShipUpgrades
             InputUtils_Compat.Init();
             PatchMainVersion();
 
-            mls.LogDebug("LGU has been patched");
+            mls.LogInfo($"{Metadata.NAME} {Metadata.VERSION} has been loaded successfully.");
         }
 
         internal static void TryPatchBetaVersion() 
         {
-            bool butlerPatched = false, knifePatched = false;
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for(int i = 0; i < assemblies.Length && (!butlerPatched || !knifePatched); i++)
-            {
-                Type[] types = assemblies[i].GetTypes();
-                for(int j = 0; j < types.Length && (!butlerPatched || !knifePatched); j++)
-                {
-                    Type type = types[j];
-                    if (type.Name == "KnifeItem")
-                    {
-                        harmony.PatchAll(typeof(KnifePatcher));
-                        knifePatched = true;
-                    }
-                    if (type.Name == "ButlerBeesEnemyAI")
-                    {
-                        harmony.PatchAll(typeof(ButlerBeesPatcher));
-                        butlerPatched = true;
-                    }
-                }
-            }
+            UpgradeBus.Instance.IsBeta = false;
         }
         internal static void PatchMainVersion()
         {
+            TryPatchBetaVersion();
             PatchEnemies();
             PatchHUD();
             PatchInteractables();
@@ -145,7 +124,9 @@ namespace MoreShipUpgrades
         static void PatchEnemies()
         {
             harmony.PatchAll(typeof(BaboonBirdAIPatcher));
+            harmony.PatchAll(typeof(ButlerBeesPatcher));
             harmony.PatchAll(typeof(EnemyAIPatcher));
+            harmony.PatchAll(typeof(EnemyAICollisionDetectPatcher));
             harmony.PatchAll(typeof(HoarderBugAIPatcher));
             harmony.PatchAll(typeof(RedLocustBeesPatch));
             harmony.PatchAll(typeof(SpringManAIPatcher));
@@ -170,6 +151,8 @@ namespace MoreShipUpgrades
             harmony.PatchAll(typeof(BoomBoxPatcher));
             harmony.PatchAll(typeof(DropPodPatcher));
             harmony.PatchAll(typeof(GrabbableObjectPatcher));
+            harmony.PatchAll(typeof(KnifePatcher));
+            harmony.PatchAll(typeof(PatchToolPatcher));
             harmony.PatchAll(typeof(RadarBoosterPatcher));
             harmony.PatchAll(typeof(ShovelPatcher));
             harmony.PatchAll(typeof(WalkiePatcher));
@@ -363,11 +346,6 @@ namespace MoreShipUpgrades
             LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(modStore);
             UpgradeBus.Instance.modStorePrefab = modStore;
         }
-        private void SetupIntroScreen()
-        {
-            UpgradeBus.Instance.IntroScreen = AssetBundleHandler.GetPerkGameObject("Intro Screen");
-            if (UpgradeBus.Instance.IntroScreen != null) UpgradeBus.Instance.IntroScreen.AddComponent<IntroScreenScript>();
-        }
         private void SetupItems()
         {
             SetupTeleporterButtons();
@@ -379,6 +357,7 @@ namespace MoreShipUpgrades
             SetupDivingKit();
             SetupWheelbarrows();
             SetupFriendlyNest();
+            mls.LogInfo("Items have been setup");
         }
         private void SetupSamples()
         {
@@ -737,7 +716,9 @@ namespace MoreShipUpgrades
             SetupEfficientEngines();
             SetupClimbingGloves();
             SetupLithiumBatteries();
-            SetupFriendshipBooster();
+            SetupAluminiumCoils();
+			SetupFriendshipBooster();
+            mls.LogInfo("Upgrades have been setup");
         }
 
         private void SetupSickBeats()
@@ -809,7 +790,7 @@ namespace MoreShipUpgrades
         }
         private void SetupInterns()
         {
-            SetupGenericPerk<Interns>(Interns.UPGRADE_NAME);
+            SetupGenericPerk<Interns>(Interns.NAME);
         }
         private void SetupPager()
         {
@@ -871,11 +852,14 @@ namespace MoreShipUpgrades
         {
             SetupGenericPerk<LithiumBatteries>(LithiumBatteries.UPGRADE_NAME);
         }
-        private void SetupFriendshipBooster()
+		void SetupAluminiumCoils()
+        {
+            SetupGenericPerk<AluminiumCoils>(AluminiumCoils.UPGRADE_NAME);
+        }
+		void SetupFriendshipBooster()
         {
             SetupGenericPerk<FriendshipBooster>(FriendshipBooster.UPGRADE_NAME);
-
-        }
+		}
         /// <summary>
         /// Generic function where it adds a script (specificed through the type) into an GameObject asset 
         /// which is present in a provided asset bundle in a given path and registers it as a network prefab.

@@ -43,30 +43,30 @@ namespace MoreShipUpgrades.Misc
         }
         private static TerminalNode ExecuteDiscombobulatorAttack(ref Terminal terminal)
         {
-            if (!BaseUpgrade.GetActiveUpgrade(Discombobulator.UPGRADE_NAME)) return DisplayTerminalMessage("You don't have access to this command yet. Purchase the 'Discombobulator'.\n\n");
+            if (!BaseUpgrade.GetActiveUpgrade(Discombobulator.UPGRADE_NAME)) return DisplayTerminalMessage(LGUConstants.DISCOMBOBULATOR_NOT_ACTIVE);
 
-            if (Discombobulator.instance.flashCooldown > 0f) return DisplayTerminalMessage($"You can discombobulate again in {Mathf.Round(Discombobulator.instance.flashCooldown)} seconds.\nType 'cooldown' or 'cd' to check discombobulation cooldown.\n\n");
+            if (Discombobulator.instance.flashCooldown > 0f) return DisplayTerminalMessage(string.Format(LGUConstants.DISCOMBOBULATOR_ON_COOLDOWN_FORMAT, Mathf.Round(Discombobulator.instance.flashCooldown)));
 
             RoundManager.Instance.PlayAudibleNoise(terminal.transform.position, 60f, 0.8f, 0, false, 14155);
             Discombobulator.instance.PlayAudioAndUpdateCooldownServerRpc();
 
             Collider[] array = Physics.OverlapSphere(terminal.transform.position, UpgradeBus.Instance.PluginConfiguration.DISCOMBOBULATOR_RADIUS.Value, 524288);
-            if (array.Length <= 0) return DisplayTerminalMessage("No stunned enemies detected.\n\n");
+            if (array.Length <= 0) return DisplayTerminalMessage(LGUConstants.DISCOMBOBULATOR_NO_ENEMIES);
 
             if (UpgradeBus.Instance.PluginConfiguration.DISCOMBOBULATOR_NOTIFY_CHAT.Value)
             {
                 terminal.StartCoroutine(CountDownChat(UpgradeBus.Instance.PluginConfiguration.DISCOMBOBULATOR_STUN_DURATION.Value + (UpgradeBus.Instance.PluginConfiguration.DISCOMBOBULATOR_INCREMENT.Value * BaseUpgrade.GetUpgradeLevel(Discombobulator.UPGRADE_NAME))));
             }
-            return DisplayTerminalMessage($"Discombobulator hit {array.Length} enemies.\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.DISCOMBULATOR_HIT_ENEMIES, array.Length));
         }
 
         private static TerminalNode ExecuteDiscombobulatorCooldown()
         {
-            if (!BaseUpgrade.GetActiveUpgrade(Discombobulator.UPGRADE_NAME)) return DisplayTerminalMessage("You don't have access to this command yet. Purchase the 'Discombobulator'.\n\n");
+            if (!BaseUpgrade.GetActiveUpgrade(Discombobulator.UPGRADE_NAME)) return DisplayTerminalMessage(LGUConstants.DISCOMBOBULATOR_NOT_ACTIVE);
 
-            if (Discombobulator.instance.flashCooldown > 0f) return DisplayTerminalMessage($"You can discombobulate again in {Mathf.Round(Discombobulator.instance.flashCooldown)} seconds.\n\n");
+            if (Discombobulator.instance.flashCooldown > 0f) return DisplayTerminalMessage(string.Format(LGUConstants.DISCOMBOBULATOR_DISPLAY_COOLDOWN, Mathf.Round(Discombobulator.instance.flashCooldown)));
 
-            return DisplayTerminalMessage("Discombobulate is ready, Type 'initattack' or 'atk' to execute.\n\n");
+            return DisplayTerminalMessage(LGUConstants.DISCOMBOBULATOR_READY);
         }
 
         private static TerminalNode ExecuteModInformation()
@@ -90,12 +90,12 @@ namespace MoreShipUpgrades.Misc
                 ulong id = GameNetworkManager.Instance.localPlayerController.playerSteamId;
                 LguStore.Instance.SaveInfo = saveInfo;
                 LguStore.Instance.UpdateLGUSaveServerRpc(id, JsonConvert.SerializeObject(saveInfo));
-                return DisplayTerminalMessage("LGU save has been wiped.\n\n");
+                return DisplayTerminalMessage(LGUConstants.LGU_SAVE_WIPED);
             }
             else
             {
                 logger.LogError("LGU SAVE NOT FOUND in ExecuteResetLGUSave()!");
-                return DisplayTerminalMessage("LGU save was not found!\n\n");
+                return DisplayTerminalMessage(LGUConstants.LGU_SAVE_NOT_FOUND);
             }
         }
         private static TerminalNode ExecuteForceCredits(string creditAmount, ref Terminal __instance)
@@ -105,21 +105,21 @@ namespace MoreShipUpgrades.Misc
                 if (__instance.IsHost || __instance.IsServer)
                 {
                     LguStore.Instance.SyncCreditsClientRpc(value);
-                    return DisplayTerminalMessage($"All clients should now have ${value}\n\n");
+                    return DisplayTerminalMessage(string.Format(LGUConstants.FORCE_CREDITS_SUCCESS_FORMAT, value));
                 }
-                else return DisplayTerminalMessage("Only the host can do this");
+                else return DisplayTerminalMessage(LGUConstants.FORCE_CREDITS_HOST_ONLY);
             }
 
-            return DisplayTerminalMessage($"Failed to parse value {creditAmount}.\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.FORCE_CREDITS_PARSED_FAIL_FORMAT, creditAmount));
         }
 
         private static TerminalNode ExecuteInternsCommand(ref Terminal terminal)
         {
-            if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.INTERN_PRICE.Value) return DisplayTerminalMessage($"Interns cost {UpgradeBus.Instance.PluginConfiguration.INTERN_PRICE.Value} credits and you have {terminal.groupCredits} credits.\n");
+            if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.INTERN_PRICE.Value)
+                return DisplayTerminalMessage(string.Format(LGUConstants.INTERNS_NOT_ENOUGH_CREDITS_FORMAT, UpgradeBus.Instance.PluginConfiguration.INTERN_PRICE.Value, terminal.groupCredits));
 
             PlayerControllerB player = StartOfRound.Instance.mapScreen.targetedPlayer;
-            if (!player.isPlayerDead) return DisplayTerminalMessage($"{player.playerUsername} is still alive, they can't be replaced with an intern.\n\n");
-            logger.LogDebug($"Player {player.playerUsername} is dead and we have enough credits, executing revive command...");
+            if (!player.isPlayerDead) return DisplayTerminalMessage(string.Format(LGUConstants.INTERNS_PLAYER_ALREADY_ALIVE_FORMAT, player.playerUsername));
             terminal.groupCredits -= UpgradeBus.Instance.PluginConfiguration.INTERN_PRICE.Value;
             LguStore.Instance.SyncCreditsServerRpc(terminal.groupCredits);
             Interns.instance.ReviveTargetedPlayerServerRpc();
@@ -130,12 +130,11 @@ namespace MoreShipUpgrades.Misc
         }
         private static TerminalNode ExecuteLoadLGUCommand(string text, ref Terminal terminal)
         {
-            if (text.ToLower() == LOAD_LGU_COMMAND) return DisplayTerminalMessage("Enter the name of the user whos upgrades/save you want to copy. Ex: `load lgu steve`\n");
+            if (text.ToLower() == LOAD_LGU_COMMAND) return DisplayTerminalMessage(LGUConstants.LOAD_LGU_NO_NAME);
 
             PlayerControllerB[] players = UnityEngine.Object.FindObjectsOfType<PlayerControllerB>();
             List<string> playerNames = new List<string>();
             string playerNameToSearch = text.Substring(text.IndexOf(LOAD_LGU_COMMAND) + LOAD_LGU_COMMAND.Length).Trim();
-            logger.LogDebug($"Starting to look for players with same name as {playerNameToSearch}");
             foreach (PlayerControllerB player in players)
             {
                 if (player == null) continue;
@@ -143,17 +142,16 @@ namespace MoreShipUpgrades.Misc
                 ulong playerSteamID = player.playerSteamId;
                 if (playerName == null) continue;
                 playerNames.Add(playerName);
-                logger.LogDebug($"Comparing {playerName} with {playerNameToSearch} case insensitive...");
                 if (!playerName.ToLower().Contains(playerNameToSearch.ToLower())) continue;
 
                 LguStore.Instance.ShareSaveServerRpc();
                 terminal.StartCoroutine(WaitForSync(playerSteamID));
                 logger.LogInfo($"Attempting to overwrite local save data with {playerName}'s save data.");
-                return DisplayTerminalMessage($"Attempting to overwrite local save data with {playerName}'s save data\nYou should see a popup in 5 seconds...\n.\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.LOAD_LGU_SUCCESS_FORMAT, playerName));
             }
             string csvNames = string.Join(", ", playerNames);
             logger.LogInfo($"{playerNameToSearch} was not found among: {csvNames}");
-            return DisplayTerminalMessage($"The name {playerNameToSearch} was not found. The following names were found:\n{csvNames}\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.LOAD_LGU_FAILURE_FORMAT, playerNameToSearch, csvNames));
         }
 
         private static TerminalNode ExecuteUpgradeCommand(string text, ref Terminal terminal, ref TerminalNode outputNode)
@@ -212,12 +210,12 @@ namespace MoreShipUpgrades.Misc
             LguStore.Instance.UpdateLGUSaveServerRpc(GameNetworkManager.Instance.localPlayerController.playerSteamId, JsonConvert.SerializeObject(new SaveInfo()));
             customNode.Unlocked = false;
             customNode.CurrentUpgrade = 0;
-            return DisplayTerminalMessage($"Unwinding {customNode.Name.ToLower()}\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.UNLOAD_LGU_SUCCESS_FORMAT, customNode.Name));
         }
 
         private static TerminalNode ExecuteScanHivesCommand()
         {
-            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage("\nUpgrade Better Scanner to level 2 to use this command\nEnter `info better scanner` to check upgrades.\n\n");
+            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage(LGUConstants.SCANNER_LEVEL_REQUIRED);
 
             GrabbableObject[] scrapItems = UnityEngine.Object.FindObjectsOfType<GrabbableObject>().ToArray();
             GrabbableObject[] filteredHives = scrapItems.Where(scrap => scrap.itemProperties.itemName == "Hive").ToArray();
@@ -235,7 +233,7 @@ namespace MoreShipUpgrades.Misc
 
         private static TerminalNode ExecuteScanScrapCommand()
         {
-            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage("\nUpgrade Better Scanner to level 2 to use this command\nEnter `info better scanner` to check upgrades.\n\n");
+            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage(LGUConstants.SCANNER_LEVEL_REQUIRED);
 
             GrabbableObject[] scrapItems = UnityEngine.Object.FindObjectsOfType<GrabbableObject>().ToArray();
             GrabbableObject[] filteredScrap = scrapItems.Where(scrap => scrap.isInFactory && scrap.itemProperties.isScrap).ToArray();
@@ -253,7 +251,7 @@ namespace MoreShipUpgrades.Misc
 
         private static TerminalNode ExecuteScanPlayerCommand()
         {
-            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage("\nUpgrade Better Scanner to level 2 to use this command\nEnter `info better scanner` to check upgrades.\n\n");
+            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage(LGUConstants.SCANNER_LEVEL_REQUIRED);
 
             PlayerControllerB[] players = UnityEngine.Object.FindObjectsOfType<PlayerControllerB>().ToArray();
             PlayerControllerB[] filteredPlayers = players.Where(player => player.playerSteamId != 0).ToArray();
@@ -278,7 +276,7 @@ namespace MoreShipUpgrades.Misc
 
         private static TerminalNode ExecuteScanEnemiesCommand()
         {
-            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage("\nUpgrade Better Scanner to level 2 to use this command\nEnter `info better scanner` to check upgrades.\n\n");
+            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage(LGUConstants.SCANNER_LEVEL_REQUIRED);
 
             EnemyAI[] enemies = UnityEngine.Object.FindObjectsOfType<EnemyAI>().Where(enem => !enem.isEnemyDead).ToArray();
             if (enemies.Length <= 0) return DisplayTerminalMessage("0 enemies detected\n\n");
@@ -322,7 +320,7 @@ namespace MoreShipUpgrades.Misc
 
         private static TerminalNode ExecuteScanDoorsCommand()
         {
-            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage("\nUpgrade Better Scanner to level 2 to use this command\nEnter `info better scanner` to check upgrades.\n\n");
+            if (BaseUpgrade.GetUpgradeLevel(BetterScanner.UPGRADE_NAME) < 1) return DisplayTerminalMessage(LGUConstants.SCANNER_LEVEL_REQUIRED);
 
             List<GameObject> fireEscape = UnityEngine.Object.FindObjectsOfType<GameObject>().Where(obj => obj.name == "SpawnEntranceBTrigger").ToList();
             List<EntranceTeleport> mainDoors = UnityEngine.Object.FindObjectsOfType<EntranceTeleport>().ToList();
@@ -389,13 +387,13 @@ namespace MoreShipUpgrades.Misc
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             if (ContractManager.Instance.contractLevel == "None")
             {
-                node.displayText = "You must have accepted a contract to execute this command...\n\n";
+                node.displayText = LGUConstants.CONTRACT_CANCEL_FAIL;
                 node.clearPreviousText = true;
                 return node;
             }
             attemptCancelContract = true;
             node.clearPreviousText = true;
-            node.displayText = "Type CONFIRM to cancel your current contract. There will be no refunds.\n\n";
+            node.displayText = LGUConstants.CONTRACT_CANCEL_CONFIRM_PROMPT;
             return node;
         }
         static TerminalNode TryGetMoonContract(string possibleMoon, ref Terminal terminal)
@@ -426,7 +424,7 @@ namespace MoreShipUpgrades.Misc
         }
         static TerminalNode TryGetContract(string possibleMoon, ref Terminal terminal)
         {
-            if (contracts.Count == 0) return DisplayTerminalMessage("Not possible to provide a contract due to configuration having it disabled.\n\n");
+            if (contracts.Count == 0) return DisplayTerminalMessage(LGUConstants.CONTRACT_FAIL);
             if (possibleMoon != "") return TryGetMoonContract(possibleMoon, ref terminal);
             string txt = null;
             if(ContractManager.Instance.contractLevel != "None")
@@ -502,13 +500,13 @@ namespace MoreShipUpgrades.Misc
             if (!UpgradeBus.Instance.PluginConfiguration.EXTEND_DEADLINE_ENABLED.Value) return outputNode;
 
             if (daysString == "")
-                return DisplayTerminalMessage($"You need to specify how many days you wish to extend the deadline for: \"extend deadline <days>\"\n\n");
+                return DisplayTerminalMessage(LGUConstants.EXTEND_DEADLINE_USAGE);
 
             if (!(int.TryParse(daysString, out int days) && days > 0)) 
-                return DisplayTerminalMessage($"Invalid value ({daysString}) inserted to extend the deadline.\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.EXTEND_DEADLINE_PARSING_ERROR_FORMAT, daysString));
 
             if (terminal.groupCredits < days * UpgradeBus.Instance.PluginConfiguration.EXTEND_DEADLINE_PRICE.Value) 
-                return DisplayTerminalMessage($"Not enough credits to purchase the proposed deadline extension.\n Total price: {days * UpgradeBus.Instance.PluginConfiguration.EXTEND_DEADLINE_PRICE.Value}\n Current credits: {terminal.groupCredits}\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.EXTEND_DEADLINE_NOT_ENOUGH_CREDITS_FORMAT, days * UpgradeBus.Instance.PluginConfiguration.EXTEND_DEADLINE_PRICE.Value, terminal.groupCredits));
 
             terminal.groupCredits -= days * UpgradeBus.Instance.PluginConfiguration.EXTEND_DEADLINE_PRICE.Value;
             LguStore.Instance.SyncCreditsServerRpc(terminal.groupCredits);
@@ -535,7 +533,7 @@ namespace MoreShipUpgrades.Misc
         {
             switch (secondWord)
             {
-                case "": return DisplayTerminalMessage($"Enter a valid address for a device to connect to!\n\n");
+                case "": return DisplayTerminalMessage(LGUConstants.BRUTEFORCE_USAGE);
                 default: return HandleBruteForce(secondWord);
             }
         }
@@ -545,13 +543,13 @@ namespace MoreShipUpgrades.Misc
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             if (word.ToLower() != "confirm")
             {
-                node.displayText = "Failed to confirm user's input. Invalidated cancel contract request.\n\n";
+                node.displayText = LGUConstants.CONTRACT_CANCEL_CONFIRM_PROMPT_FAIL;
                 node.clearPreviousText = true;
                 return node;
             }
             if (terminal.IsHost || terminal.IsServer) ContractManager.Instance.SyncContractDetailsClientRpc("None", -1);
             else ContractManager.Instance.ReqSyncContractDetailsServerRpc("None", -1);
-            node.displayText = "Cancelling contract...\n\n";
+            node.displayText = LGUConstants.CONTRACT_CANCEL_CONFIRM_PROMPT_SUCCESS;
             node.clearPreviousText = true;
             return node;
 
@@ -563,7 +561,7 @@ namespace MoreShipUpgrades.Misc
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             if (word.ToLower() != "confirm")
             {
-                node.displayText = "Failed to confirm user's input. Invalidated specified moon contract request.\n\n";
+                node.displayText = LGUConstants.CONTRACT_SPECIFY_CONFIRM_PROMPT_FAIL;
                 node.clearPreviousText = true;
                 return node;
             }
@@ -575,17 +573,17 @@ namespace MoreShipUpgrades.Misc
             if (terminal.IsHost || terminal.IsServer) ContractManager.Instance.SyncContractDetailsClientRpc(ContractManager.Instance.contractLevel, i);
             else ContractManager.Instance.ReqSyncContractDetailsServerRpc(ContractManager.Instance.contractLevel, i);
             logger.LogInfo($"User accepted a {ContractManager.Instance.contractType} contract on {ContractManager.Instance.contractLevel}");
-            return DisplayTerminalMessage($"A {contracts[i]} contract has been accepted for {moon}!{contractInfos[i]}");
+            return DisplayTerminalMessage(string.Format(LGUConstants.CONTRACT_SPECIFY_CONFIRM_PROMPT_SUCCESS_FORMAT, contracts[i], moon, contractInfos[i]));
         }
         static TerminalNode CheckConfirmForWeatherProbe(string word, ref Terminal terminal)
         {
             (string, LevelWeatherType) selectedWeather = attemptWeatherProbe;
             attemptWeatherProbe = (null, LevelWeatherType.None);
-            if (word.ToLower() != "confirm") return DisplayTerminalMessage("Failed to confirm user's input. Invalidated specified weather probe request.\n\n");
+            if (word.ToLower() != "confirm") return DisplayTerminalMessage(LGUConstants.WEATHER_SPECIFY_CONFIRM_PROMPT_FAIL);
             terminal.groupCredits -= UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value;
             LguStore.Instance.SyncCreditsServerRpc(terminal.groupCredits);
             LguStore.Instance.SyncWeatherServerRpc(selectedWeather.Item1, selectedWeather.Item2);
-            return DisplayTerminalMessage($"A probe has been sent to {selectedWeather.Item1} to change the weather to {selectedWeather.Item2}.\n\n{UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value} credits have been pulled from your balance.\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.CONTRACT_SPECIFY_CONFIRM_PROMPT_SUCCESS_FORMAT, selectedWeather.Item1, selectedWeather.Item2, UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value));
         }
         public static void ParseLGUCommands(string fullText, ref Terminal terminal, ref TerminalNode outputNode)
         {
@@ -645,48 +643,48 @@ namespace MoreShipUpgrades.Misc
         static TerminalNode ExecuteProbeCommands(string secondWord, string thirdWord, ref Terminal terminal, ref TerminalNode outputNode)
         {
             if (!UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_ENABLED.Value) return outputNode;
-            if (secondWord == "") return DisplayTerminalMessage($"Probe <moonName> [weatherType]\n\nmoonName: Name of a moon\nweatherType: Name of a weather allowed in the level\n\n");
-            if (!StartOfRound.Instance.inShipPhase) return DisplayTerminalMessage($"You can only send out weather probes while in orbit.\n\n");
+            if (secondWord == "") return DisplayTerminalMessage(LGUConstants.WEATHER_PROBE_USAGE);
+            if (!StartOfRound.Instance.inShipPhase) return DisplayTerminalMessage(LGUConstants.WEATHER_PROBE_ONLY_IN_ORBIT);
             if (thirdWord != "") return ExecuteSpecifiedProbeCommand(secondWord, thirdWord, terminal);
-            if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value) return DisplayTerminalMessage($"You do not have enough credits to purchase a weather probe.\nPrice: {UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value}\nCurrent credits: {terminal.groupCredits}\n\n");
+            if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value) return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_NOT_ENOUGH_CREDITS_FORMAT, UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value, terminal.groupCredits));
 
-                (string, LevelWeatherType) selectedWeather = WeatherManager.PickWeather(secondWord);
-            if (selectedWeather.Item1 == null) return DisplayTerminalMessage($"No moon was found that has an occurence of selected input ({secondWord}).\n\n");
-            if (StartOfRound.Instance.levels.First(x => x.PlanetName == selectedWeather.Item1).currentWeather == selectedWeather.Item2) return DisplayTerminalMessage($"The provided moon ({selectedWeather.Item1}) already has the selected weather ({selectedWeather.Item2}).\n\n");
+            (string, LevelWeatherType) selectedWeather = WeatherManager.PickWeather(secondWord);
+            if (selectedWeather.Item1 == null) return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_MOON_NOT_FOUND_FORMAT, secondWord));
+            if (StartOfRound.Instance.levels.First(x => x.PlanetName == selectedWeather.Item1).currentWeather == selectedWeather.Item2) return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_SAME_WEATHER_FORMAT, selectedWeather.Item1, selectedWeather.Item2));
             terminal.groupCredits -= UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value;
             LguStore.Instance.SyncCreditsServerRpc(terminal.groupCredits);
             LguStore.Instance.SyncWeatherServerRpc(selectedWeather.Item1, selectedWeather.Item2);
-            return DisplayTerminalMessage($"A probe has been sent to {selectedWeather.Item1} to change the weather to {selectedWeather.Item2}.\n\n{UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value} credits have been pulled from your balance.\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_SUCCESS_FORMAT, selectedWeather.Item1, selectedWeather.Item2, UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PRICE.Value));
         }
         static TerminalNode ExecuteSpecifiedProbeCommand(string secondWord, string thirdWord, Terminal terminal)
         {
             if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value)
-                return DisplayTerminalMessage($"Not enough credits to purchase a weather probe with specified weather.\nPrice: {UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value}\nCurrent credits: {terminal.groupCredits}\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_SPECIFY_NOT_ENOUGH_CREDITS_FORMAT, UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value, terminal.groupCredits));
 
             (string, LevelWeatherType) selectedWeather = WeatherManager.PickWeather(secondWord, thirdWord);
-            if (selectedWeather.Item1 == null) return DisplayTerminalMessage($"No moon was found that has an occurence of selected input ({secondWord}).\n\n");
-            if (selectedWeather.Item2 == LevelWeatherType.DustClouds) return DisplayTerminalMessage($"An invalid weather was selected to probe for the moon.\n\n");
-            if (StartOfRound.Instance.levels.First(x => x.PlanetName == selectedWeather.Item1).currentWeather == selectedWeather.Item2) return DisplayTerminalMessage($"The provided moon ({selectedWeather.Item1}) already has the selected weather ({selectedWeather.Item2}).\n\n");
+            if (selectedWeather.Item1 == null) return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_MOON_NOT_FOUND_FORMAT, secondWord));
+            if (selectedWeather.Item2 == LevelWeatherType.DustClouds) return DisplayTerminalMessage(LGUConstants.WEATHER_PROBE_SPECIFY_INVALID_WEATHER);
+            if (StartOfRound.Instance.levels.First(x => x.PlanetName == selectedWeather.Item1).currentWeather == selectedWeather.Item2) return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_SAME_WEATHER_FORMAT, selectedWeather.Item1, selectedWeather.Item2));
             attemptWeatherProbe = selectedWeather;
-            return DisplayTerminalMessage($"Type CONFIRM if you wish to have {selectedWeather.Item1} with {(selectedWeather.Item2 == LevelWeatherType.None ? "no weather" : $"a {selectedWeather.Item2} weather")} for the cost of {UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value} Company Credits.\n\n");
+            return DisplayTerminalMessage(string.Format(LGUConstants.WEATHER_PROBE_SPECIFY_SUCCESS_FORMAT, selectedWeather.Item1, (selectedWeather.Item2 == LevelWeatherType.None ? "no weather" : $"a {selectedWeather.Item2} weather"), UpgradeBus.Instance.PluginConfiguration.WEATHER_PROBE_PICKED_WEATHER_PRICE.Value));
         }
         private static TerminalNode ExecuteScrapInsuranceCommand(ref Terminal terminal, ref TerminalNode outputNode)
         {
             if (!UpgradeBus.Instance.PluginConfiguration.SCRAP_INSURANCE_ENABLED.Value) return outputNode;
 
             if (ScrapInsurance.GetScrapInsuranceStatus())
-                return DisplayTerminalMessage($"You already purchased insurance to protect your scrap belongings.\n\n");
+                return DisplayTerminalMessage(LGUConstants.SCRAP_INSURANCE_ALREADY_PURCHASED);
 
             if (!StartOfRound.Instance.inShipPhase)
-                return DisplayTerminalMessage($"You can only acquire insurance while in orbit.\n\n");
+                return DisplayTerminalMessage(LGUConstants.SCRAP_INSURANCE_ONLY_IN_ORBIT);
 
             if (terminal.groupCredits < UpgradeBus.Instance.PluginConfiguration.SCRAP_INSURANCE_PRICE.Value)
-                return DisplayTerminalMessage($"Not enough credits to purchase Scrap Insurance.\nPrice: {UpgradeBus.Instance.PluginConfiguration.SCRAP_INSURANCE_PRICE.Value}\nCurrent credits: {terminal.groupCredits}\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.SCRAP_INSURANCE_NOT_ENOUGH_CREDITS_FORMAT, UpgradeBus.Instance.PluginConfiguration.SCRAP_INSURANCE_PRICE.Value, terminal.groupCredits));
 
             terminal.groupCredits -= UpgradeBus.Instance.PluginConfiguration.SCRAP_INSURANCE_PRICE.Value;
             LguStore.Instance.SyncCreditsServerRpc(terminal.groupCredits);
             ScrapInsurance.TurnOnScrapInsurance();
-            return DisplayTerminalMessage($"Scrap Insurance has been activated.\nIn case of a team wipe in your next trip, your scrap will be preserved.\n\n");
+            return DisplayTerminalMessage(LGUConstants.SCRAP_INSURANCE_SUCCESS);
         }
         private static TerminalNode ExecuteScrapCommands(string secondWord, ref Terminal terminal, ref TerminalNode outputNode)
         {
@@ -713,13 +711,13 @@ namespace MoreShipUpgrades.Misc
         {
             if(ContractManager.Instance.contractLevel != StartOfRound.Instance.currentLevel.PlanetName || ContractManager.Instance.contractType != "defusal")
             {
-                return DisplayTerminalMessage("YOU MUST BE IN A DEFUSAL CONTRACT TO USE THIS COMMAND!\n\n");
+                return DisplayTerminalMessage(LGUConstants.LOOKUP_NOT_IN_CONTRACT);
             }
-            if (secondWord == "") return DisplayTerminalMessage("YOU MUST ENTER A SERIAL NUMBER TO LOOK UP!\n\n");
+            if (secondWord == "") return DisplayTerminalMessage(LGUConstants.LOOKUP_USAGE);
             if (secondWord.ToLower() == ContractManager.Instance.SerialNumber.ToLower() || secondWord.ToLower() == ContractManager.Instance.SerialNumber.Replace("-","").ToLower())
             {
                 logger.LogInfo("DEFUSAL: user entered correct serial number!");
-                return DisplayTerminalMessage("CUT THE WIRES IN THE FOLLOWING ORDER:\n\n" + string.Join("\n\n", ContractManager.Instance.bombOrder) +"\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.LOOKUP_CUT_WIRES_FORMAT, string.Join("\n\n", ContractManager.Instance.bombOrder)));
             }
             else
             {
@@ -727,13 +725,13 @@ namespace MoreShipUpgrades.Misc
                 if (ContractManager.Instance.fakeBombOrders.ContainsKey(secondWord))
                 {
                     logger.LogInfo("DEFUSAL: Reusing previously generated fake defusal under this key.");
-                    return DisplayTerminalMessage("CUT THE WIRES IN THE FOLLOWING ORDER:\n\n" + string.Join("\n\n", ContractManager.Instance.fakeBombOrders[secondWord]) +"\n\n");
+                    return DisplayTerminalMessage(string.Format(LGUConstants.LOOKUP_CUT_WIRES_FORMAT, string.Join("\n\n", ContractManager.Instance.fakeBombOrders[secondWord])));
                 }
                 logger.LogInfo("DEFUSAL: Generating new fake defusal under this key.");
                 List<string> falseOrder = new List<string> { "red","green","blue" };
                 Tools.ShuffleList(falseOrder);
                 ContractManager.Instance.fakeBombOrders.Add(secondWord, falseOrder);
-                return DisplayTerminalMessage("CUT THE WIRES IN THE FOLLOWING ORDER:\n\n" + string.Join("\n\n", falseOrder) +"\n\n");
+                return DisplayTerminalMessage(string.Format(LGUConstants.LOOKUP_CUT_WIRES_FORMAT, string.Join("\n\n", falseOrder)));
             }
         }
 
