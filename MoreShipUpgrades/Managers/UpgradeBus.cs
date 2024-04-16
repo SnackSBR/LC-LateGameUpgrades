@@ -604,8 +604,8 @@ namespace MoreShipUpgrades.Managers
                                                 shareStatus: true,
                                                 PluginConfiguration.FRIENDSHIP_BOOSTER_ENABLED.Value && PluginConfiguration.FRIENDLY_NEST_ENABLED.Value,
                                                 PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE.Value,
-                                                new int[] { PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE2.Value, PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE3.Value }
-                                                );
+                                                [PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE2.Value, PluginConfiguration.FRIENDSHIP_BOOSTER_PRICE3.Value],
+                                                PluginConfiguration.OVERRIDE_UPGRADE_NAMES ? PluginConfiguration.FRIENDSHIP_BOOSTER_OVERRIDE_NAME : "");
         }
         /// <summary>
         /// Generic function where it adds a terminal node for an upgrade that can be purchased multiple times

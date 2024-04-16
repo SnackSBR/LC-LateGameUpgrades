@@ -105,6 +105,7 @@ namespace MoreShipUpgrades.Misc.Util
         internal static readonly string CHARGING_BOOSTER_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, ChargingBooster.UPGRADE_NAME);
         internal static readonly string DISCOMBOBULATOR_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, Discombobulator.UPGRADE_NAME);
         internal static readonly string EFFICIENT_ENGINES_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, EfficientEngines.UPGRADE_NAME);
+        internal static readonly string FRIENDSHIP_BOOSTER_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, FriendshipBooster.UPGRADE_NAME);
         internal static readonly string HUNTER_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, Hunter.UPGRADE_NAME);
         internal static readonly string LITHIUM_BATTERIES_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, LithiumBatteries.UPGRADE_NAME);
         internal static readonly string MARKET_INFLUENCE_OVERRIDE_NAME_KEY = string.Format(OVERRIDE_NAME_KEY_FORMAT, MarketInfluence.UPGRADE_NAME);

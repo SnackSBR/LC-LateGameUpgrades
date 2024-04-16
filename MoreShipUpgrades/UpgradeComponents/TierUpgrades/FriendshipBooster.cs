@@ -12,12 +12,12 @@ namespace MoreShipUpgrades.UpgradeComponents.TierUpgrades
 {
     class FriendshipBooster : TierUpgrade, IUpgradeWorldBuilding
     {
-        public const string UPGRADE_NAME = "Friendship Booster";
+        internal const string UPGRADE_NAME = "Friendship Booster";
         internal const string WORLD_BUILDING_TEXT = "\n\nTalk no jutsu\n\n";
 
         internal override void Start()
         {
-            upgradeName = UPGRADE_NAME;
+            upgradeName = UpgradeBus.Instance.PluginConfiguration.OVERRIDE_UPGRADE_NAMES ? UpgradeBus.Instance.PluginConfiguration.FRIENDSHIP_BOOSTER_OVERRIDE_NAME : UPGRADE_NAME;
             base.Start();
         }
 

@@ -141,6 +141,7 @@ namespace MoreShipUpgrades.Misc
         [field: DataMember] public SyncedEntry<string> CHARGING_BOOSTER_OVERRIDE_NAME { get; set; }
         [field: DataMember] public SyncedEntry<string> DISCOMBOBULATOR_OVERRIDE_NAME { get; set; }
         [field: DataMember] public SyncedEntry<string> EFFICIENT_ENGINES_OVERRIDE_NAME { get; set; }
+        [field: DataMember] public SyncedEntry<string> FRIENDSHIP_BOOSTER_OVERRIDE_NAME { get; set; }
         [field: DataMember] public SyncedEntry<string> HUNTER_OVERRIDE_NAME { get; set; }
         [field: DataMember] public SyncedEntry<string> LITHIUM_BATTERIES_OVERRIDE_NAME { get; set; }
         [field: DataMember] public SyncedEntry<string> MARKET_INFLUENCE_OVERRIDE_NAME { get; set; }
@@ -401,6 +402,7 @@ namespace MoreShipUpgrades.Misc
             CHARGING_BOOSTER_OVERRIDE_NAME      = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.CHARGING_BOOSTER_OVERRIDE_NAME_KEY, ChargingBooster.UPGRADE_NAME);
             DISCOMBOBULATOR_OVERRIDE_NAME       = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.DISCOMBOBULATOR_OVERRIDE_NAME_KEY, Discombobulator.UPGRADE_NAME);
             EFFICIENT_ENGINES_OVERRIDE_NAME     = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.EFFICIENT_ENGINES_OVERRIDE_NAME_KEY, EfficientEngines.UPGRADE_NAME);
+            FRIENDSHIP_BOOSTER_OVERRIDE_NAME = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.FRIENDSHIP_BOOSTER_OVERRIDE_NAME_KEY, FriendshipBooster.UPGRADE_NAME);
             HUNTER_OVERRIDE_NAME                = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.HUNTER_OVERRIDE_NAME_KEY, Hunter.UPGRADE_NAME);
             LITHIUM_BATTERIES_OVERRIDE_NAME     = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.LITHIUM_BATTERIES_OVERRIDE_NAME_KEY, LithiumBatteries.UPGRADE_NAME);
             MARKET_INFLUENCE_OVERRIDE_NAME      = SyncedBindingExtensions.BindSyncedEntry(cfg, topSection, LGUConstants.MARKET_INFLUENCE_OVERRIDE_NAME_KEY, MarketInfluence.UPGRADE_NAME);
